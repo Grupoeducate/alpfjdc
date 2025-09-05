@@ -40,6 +40,8 @@
             width: 60px;
             height: 60px;
             margin-right: 20px;
+            background-color: #eee;
+            border-radius: 50%;
         }
         .header-info h1 {
             margin: 0;
@@ -49,20 +51,26 @@
             margin: 0;
             color: #6c757d;
         }
-        .filters, .controls {
+        .controls-wrapper {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
             margin-bottom: 20px;
             padding: 15px;
             background-color: var(--color-header);
-            border-radius: 5px;
+            border-radius: 8px;
         }
-        .filters > div, .controls > div {
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            flex-grow: 1;
+        }
+        .filters > div {
             display: flex;
             flex-direction: column;
         }
-        .filters label, .controls label {
+        .filters label {
             font-weight: bold;
             margin-bottom: 5px;
             font-size: 0.9em;
@@ -73,36 +81,53 @@
             border-radius: 4px;
             font-size: 1em;
         }
+        .view-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .view-selector label {
+             font-weight: bold;
+             font-size: 0.9em;
+        }
         .btn {
             padding: 8px 15px;
-            border: none;
+            border: 1px solid transparent;
             border-radius: 4px;
             cursor: pointer;
             font-size: 1em;
             font-weight: bold;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
         }
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
+        .btn-group .btn {
+            border-radius: 0;
         }
-        .btn-primary:hover {
-            background-color: #0056b3;
+        .btn-group .btn:first-child {
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+        }
+        .btn-group .btn:last-child {
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
         }
         .btn-secondary {
-            background-color: #6c757d;
-            color: white;
+            background-color: #e9ecef;
+            color: #333;
+            border-color: #dee2e6;
         }
         .btn-secondary:hover {
-            background-color: #5a6268;
+            background-color: #d7dce1;
         }
         .btn.active {
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+            background-color: var(--color-alto);
+            color: white;
+            border-color: var(--color-alto);
         }
         .legend {
             display: flex;
             gap: 20px;
             margin-bottom: 20px;
+            padding-left: 5px;
         }
         .legend-item {
             display: flex;
@@ -113,6 +138,7 @@
             width: 20px;
             height: 20px;
             border-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.1);
         }
         .table-container {
             overflow-x: auto;
@@ -133,6 +159,7 @@
             cursor: pointer;
             position: sticky;
             top: 0;
+            z-index: 10;
         }
         th:hover {
             background-color: #e2e6ea;
@@ -140,12 +167,11 @@
         tbody tr:nth-child(even) {
             background-color: #f8f9fa;
         }
-        .bg-superior { background-color: rgba(40, 167, 69, 0.7); color: white; }
-        .bg-alto { background-color: rgba(0, 123, 255, 0.7); color: white; }
-        .bg-basico { background-color: rgba(255, 193, 7, 0.7); color: #333; }
-        .bg-bajo { background-color: rgba(220, 53, 69, 0.7); color: white; }
+        .bg-superior { background-color: #28a745 !important; color: white; }
+        .bg-alto { background-color: #007bff !important; color: white; }
+        .bg-basico { background-color: #ffc107 !important; color: #212529; }
+        .bg-bajo { background-color: #dc3545 !important; color: white; }
 
-        /* Column Visibility Logic */
         .view-areas .col-component, .view-areas .col-header-component { display: none; }
         .view-components .col-area, .view-components .col-header-area { display: none; }
     </style>
@@ -153,57 +179,57 @@
 <body>
 
     <div class="container">
-        <div class="header">
-            <img src="logo.png" alt="Logo Colegio">
+        <header class="header">
+            <img src="logo.png" alt="Logo Colegio" onerror="this.style.display='none'">
             <div class="header-info">
                 <h1 id="schoolName">Cargando...</h1>
                 <p id="schoolDane">Cargando...</p>
             </div>
-        </div>
+        </header>
 
-        <div class="filters">
-            <div>
-                <label for="gradeFilter">Grado</label>
-                <select id="gradeFilter"></select>
-            </div>
-            <div>
-                <label for="groupFilter">Grupo</label>
-                <select id="groupFilter"></select>
-            </div>
-            <div>
-                <label for="testFilter">Prueba</label>
-                <select id="testFilter"></select>
-            </div>
-            <div>
-                <label for="studentSearch">Buscar Estudiante</label>
-                <input type="text" id="studentSearch" placeholder="Nombre del estudiante...">
-            </div>
-            <div>
-                <label for="performanceFilter">Desempeño General</label>
-                <select id="performanceFilter">
-                    <option value="all">Todos</option>
-                    <option value="superior">Superior (3.81 - 5.0)</option>
-                    <option value="alto">Alto (3.21 - 3.8)</option>
-                    <option value="basico">Básico (2.51 - 3.2)</option>
-                    <option value="bajo">Bajo (&lt;= 2.5)</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="controls">
-            <div>
-                <label>Selector de Vista</label>
+        <div class="controls-wrapper">
+            <div class="filters">
                 <div>
-                    <button id="viewAreasBtn" class="btn btn-primary active">Vista por Áreas</button>
-                    <button id="viewComponentsBtn" class="btn btn-secondary">Vista por Componentes</button>
+                    <label for="gradeFilter">Grado</label>
+                    <select id="gradeFilter"></select>
+                </div>
+                <div>
+                    <label for="groupFilter">Grupo</label>
+                    <select id="groupFilter"></select>
+                </div>
+                <div>
+                    <label for="testFilter">Prueba</label>
+                    <select id="testFilter"></select>
+                </div>
+                <div>
+                    <label for="studentSearch">Buscar Estudiante</label>
+                    <input type="text" id="studentSearch" placeholder="Nombre del estudiante...">
+                </div>
+                <div>
+                    <label for="performanceFilter">Desempeño General</label>
+                    <select id="performanceFilter">
+                        <option value="all">Todos</option>
+                        <option value="superior">Superior (3.81 - 5.0)</option>
+                        <option value="alto">Alto (3.21 - 3.8)</option>
+                        <option value="basico">Básico (2.51 - 3.2)</option>
+                        <option value="bajo">Bajo (&lt;= 2.5)</option>
+                    </select>
                 </div>
             </div>
-            <div class="legend">
-                 <div class="legend-item"><div class="legend-color" style="background-color: var(--color-superior);"></div> Superior</div>
-                 <div class="legend-item"><div class="legend-color" style="background-color: var(--color-alto);"></div> Alto</div>
-                 <div class="legend-item"><div class="legend-color" style="background-color: var(--color-basico);"></div> Básico</div>
-                 <div class="legend-item"><div class="legend-color" style="background-color: var(--color-bajo);"></div> Bajo</div>
+            <div class="view-selector">
+                <label>Selector de Vista</label>
+                <div class="btn-group">
+                    <button id="viewAreasBtn" class="btn active">Vista por Áreas</button>
+                    <button id="viewComponentsBtn" class="btn">Vista por Componentes</button>
+                </div>
             </div>
+        </div>
+
+        <div class="legend">
+             <div class="legend-item"><div class="legend-color" style="background-color: var(--color-superior);"></div> Superior</div>
+             <div class="legend-item"><div class="legend-color" style="background-color: var(--color-alto);"></div> Alto</div>
+             <div class="legend-item"><div class="legend-color" style="background-color: var(--color-basico);"></div> Básico</div>
+             <div class="legend-item"><div class="legend-color" style="background-color: var(--color-bajo);"></div> Bajo</div>
         </div>
 
         <div class="table-container">
@@ -217,20 +243,19 @@
                         <th class="col-header-area">Prom. Sociales</th>
                         <th class="col-header-area">Prom. Lenguaje</th>
                         <th class="col-header-area">Prom. Inglés</th>
-                        <th class="col-header-component">Lenguaje</th>
-                        <th class="col-header-component">Biología</th>
-                        <th class="col-header-component">Física</th>
-                        <th class="col-header-component">CTS</th>
-                        <th class="col-header-component">Estadística</th>
-                        <th class="col-header-component">Geometría</th>
-                        <th class="col-header-component">Aritmética</th>
-                        <th class="col-header-component">C. Sociales</th>
-                        <th class="col-header-component">C. Ciudadanas</th>
-                        <th class="col-header-component">Inglés</th>
+                        <th class="col-header-component">LENGUAJE</th>
+                        <th class="col-header-component">BIOLOGIA</th>
+                        <th class="col-header-component">FISICA</th>
+                        <th class="col-header-component">CIENCIA TECNOLOGIA Y SOCIEDAD</th>
+                        <th class="col-header-component">ESTADISTICA</th>
+                        <th class="col-header-component">GEOMETRIA</th>
+                        <th class="col-header-component">ARITMETICA</th>
+                        <th class="col-header-component">CIENCIAS SOCIALES</th>
+                        <th class="col-header-component">COMPETENCIAS CIUDADANAS</th>
+                        <th class="col-header-component">INGLES</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <!-- Filas de datos se cargarán aquí -->
+                <tbody id="tableBody">
                 </tbody>
             </table>
         </div>
@@ -239,25 +264,25 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let allData = [];
-            let metadata = {};
-            const COLUMNS = {
-                AREAS: ['Promedio_General', 'Promedio_Matematicas', 'Promedio_Naturales', 'Promedio_Sociales', 'Promedio_Lenguaje', 'Promedio_Ingles'],
-                COMPONENTS: ['LENGUAJE', 'BIOLOGIA', 'FISICA', 'CIENCIA TECNOLOGIA Y SOCIEDAD', 'ESTADISTICA', 'GEOMETRIA', 'ARITMETICA', 'CIENCIAS SOCIALES', 'COMPETENCIAS CIUDADANAS', 'INGLES']
-            };
-
+            const table = document.getElementById('resultsTable');
+            const tableBody = document.getElementById('tableBody');
             const gradeFilter = document.getElementById('gradeFilter');
             const groupFilter = document.getElementById('groupFilter');
             const testFilter = document.getElementById('testFilter');
             const studentSearch = document.getElementById('studentSearch');
             const performanceFilter = document.getElementById('performanceFilter');
-            const tableBody = document.querySelector('#resultsTable tbody');
-            const table = document.getElementById('resultsTable');
             const viewAreasBtn = document.getElementById('viewAreasBtn');
             const viewComponentsBtn = document.getElementById('viewComponentsBtn');
+
+            const COLUMNS = {
+                AREAS: ['Promedio_General', 'Promedio_Matematicas', 'Promedio_Naturales', 'Promedio_Sociales', 'Promedio_Lenguaje', 'Promedio_Ingles'],
+                COMPONENTS: ['LENGUAJE', 'BIOLOGIA', 'FISICA', 'CIENCIA TECNOLOGIA Y SOCIEDAD', 'ESTADISTICA', 'GEOMETRIA', 'ARITMETICA', 'CIENCIAS SOCIALES', 'COMPETENCIAS CIUDADANAS', 'INGLES']
+            };
 
             const getColorClass = (value) => {
                 if (value === null || value === undefined || value === '') return '';
                 const score = parseFloat(value);
+                if (isNaN(score)) return '';
                 if (score > 3.8) return 'bg-superior';
                 if (score > 3.2) return 'bg-alto';
                 if (score > 2.5) return 'bg-basico';
@@ -265,49 +290,46 @@
             };
             
             const parseCSV = (text) => {
-                const lines = text.trim().split('\n');
+                const lines = text.trim().split(/\r?\n/);
                 const headers = lines[0].split(';');
-                return lines.slice(1).map(line => {
+                const data = lines.slice(1).map(line => {
                     const values = line.split(';');
-                    return headers.reduce((obj, header, index) => {
-                        obj[header] = values[index];
-                        return obj;
-                    }, {});
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        const value = values[index];
+                        if (value && !isNaN(value.replace(',', '.'))) {
+                            row[header] = parseFloat(value.replace(',', '.'));
+                        } else {
+                            row[header] = value;
+                        }
+                    });
+                    return row;
                 });
+                return data;
             };
             
             const loadData = async () => {
                 try {
                     const [metaResponse, dataResponse] = await Promise.all([
-                        fetch('./metadata.json'),
-                        fetch('./registros.csv')
+                        fetch('metadata.json'),
+                        fetch('registros.csv')
                     ]);
-                    metadata = await metaResponse.json();
+                    if (!metaResponse.ok || !dataResponse.ok) {
+                        throw new Error('No se pudieron cargar los archivos de datos.');
+                    }
+                    const metadata = await metaResponse.json();
                     const csvText = await dataResponse.text();
                     allData = parseCSV(csvText);
                     
-                    // Convert numeric strings to numbers
-                    allData.forEach(row => {
-                        for(const key in row) {
-                            if (!isNaN(row[key].replace(',', '.'))) {
-                                if (row[key].includes(',')) {
-                                    row[key] = parseFloat(row[key].replace(',', '.'));
-                                } else if (row[key].trim() !== '') {
-                                    row[key] = parseFloat(row[key]);
-                                }
-                            }
-                        }
-                    });
-
-                    populateUI();
+                    populateUI(metadata);
                     filterAndRender();
                 } catch (error) {
                     console.error("Error al cargar los datos:", error);
-                    tableBody.innerHTML = '<tr><td colspan="17">Error al cargar los datos. Asegúrese de que los archivos metadata.json y registros.csv estén en la misma carpeta.</td></tr>';
+                    tableBody.innerHTML = `<tr><td colspan="17">Error al cargar los datos. Asegúrese de que los archivos metadata.json y registros.csv estén en la misma carpeta y sean accesibles.</td></tr>`;
                 }
             };
 
-            const populateUI = () => {
+            const populateUI = (metadata) => {
                 document.getElementById('schoolName').textContent = metadata.schoolName;
                 document.getElementById('schoolDane').textContent = `DANE: ${metadata.schoolDane}`;
                 
@@ -332,91 +354,84 @@
                     tableBody.innerHTML = '<tr><td colspan="17">No se encontraron registros con los filtros seleccionados.</td></tr>';
                     return;
                 }
+                const fragment = document.createDocumentFragment();
                 data.forEach(row => {
                     const tr = document.createElement('tr');
                     
-                    // Fixed column: Student
                     let tdStudent = document.createElement('td');
                     tdStudent.textContent = row.Estudiante;
                     tr.appendChild(tdStudent);
                     
-                    // Area columns
-                    COLUMNS.AREAS.forEach(colName => {
-                        let td = document.createElement('td');
-                        td.className = 'col-area';
-                        const value = row[colName] !== undefined ? row[colName] : '';
-                        td.textContent = typeof value === 'number' ? value.toFixed(1) : value;
-                        td.classList.add(getColorClass(value));
-                        tr.appendChild(td);
-                    });
+                    const createCell = (value, className) => {
+                        const td = document.createElement('td');
+                        td.className = className;
+                        if (typeof value === 'number') {
+                            td.textContent = value.toFixed(1);
+                            td.classList.add(getColorClass(value));
+                        } else {
+                            td.textContent = value || '';
+                        }
+                        return td;
+                    };
 
-                    // Component columns
-                    COLUMNS.COMPONENTS.forEach(colName => {
-                        let td = document.createElement('td');
-                        td.className = 'col-component';
-                        const value = row[colName] !== undefined ? row[colName] : '';
-                        td.textContent = typeof value === 'number' ? value.toFixed(1) : value;
-                        td.classList.add(getColorClass(value));
-                        tr.appendChild(td);
-                    });
+                    COLUMNS.AREAS.forEach(colName => tr.appendChild(createCell(row[colName], 'col-area')));
+                    COLUMNS.COMPONENTS.forEach(colName => tr.appendChild(createCell(row[colName], 'col-component')));
                     
-                    tableBody.appendChild(tr);
+                    fragment.appendChild(tr);
                 });
+                tableBody.appendChild(fragment);
             };
 
             const filterAndRender = () => {
                 let filteredData = [...allData];
 
-                if (gradeFilter.value !== 'all') {
-                    filteredData = filteredData.filter(row => row.Grado == gradeFilter.value);
+                const grade = gradeFilter.value;
+                const group = groupFilter.value;
+                const test = testFilter.value;
+                const searchTerm = studentSearch.value.trim().toLowerCase();
+                const performance = performanceFilter.value;
+
+                if (grade !== 'all') {
+                    filteredData = filteredData.filter(row => String(row.Grado) === grade);
                 }
-                if (groupFilter.value !== 'all') {
-                    filteredData = filteredData.filter(row => row.Grupo == groupFilter.value);
+                if (group !== 'all') {
+                    filteredData = filteredData.filter(row => row.Grupo === group);
                 }
-                if (testFilter.value !== 'all') {
-                    filteredData = filteredData.filter(row => row.Prueba === testFilter.value);
+                if (test !== 'all') {
+                    filteredData = filteredData.filter(row => row.Prueba === test);
                 }
-                if (studentSearch.value.trim() !== '') {
-                    const searchTerm = studentSearch.value.trim().toLowerCase();
+                if (searchTerm) {
                     filteredData = filteredData.filter(row => row.Estudiante.toLowerCase().includes(searchTerm));
                 }
-                if (performanceFilter.value !== 'all') {
-                    const level = performanceFilter.value;
+                if (performance !== 'all') {
                     filteredData = filteredData.filter(row => {
                         const score = row.Promedio_General;
-                        if (level === 'superior') return score > 3.8;
-                        if (level === 'alto') return score > 3.2 && score <= 3.8;
-                        if (level === 'basico') return score > 2.5 && score <= 3.2;
-                        if (level === 'bajo') return score <= 2.5;
-                        return true;
+                        if (score === undefined || score === null) return false;
+                        switch (performance) {
+                            case 'superior': return score > 3.8;
+                            case 'alto': return score > 3.2 && score <= 3.8;
+                            case 'basico': return score > 2.5 && score <= 3.2;
+                            case 'bajo': return score <= 2.5;
+                            default: return true;
+                        }
                     });
                 }
-
                 renderTable(filteredData);
             };
 
-            // Event Listeners
-            [gradeFilter, groupFilter, testFilter, performanceFilter].forEach(el => {
-                el.addEventListener('change', filterAndRender);
-            });
+            [gradeFilter, groupFilter, testFilter, performanceFilter].forEach(el => el.addEventListener('change', filterAndRender));
             studentSearch.addEventListener('input', filterAndRender);
 
             viewAreasBtn.addEventListener('click', () => {
-                table.classList.remove('view-components');
-                table.classList.add('view-areas');
-                viewAreasBtn.classList.add('active', 'btn-primary');
-                viewAreasBtn.classList.remove('btn-secondary');
-                viewComponentsBtn.classList.remove('active', 'btn-primary');
-                viewComponentsBtn.classList.add('btn-secondary');
+                table.classList.replace('view-components', 'view-areas');
+                viewAreasBtn.classList.add('active');
+                viewComponentsBtn.classList.remove('active');
             });
 
             viewComponentsBtn.addEventListener('click', () => {
-                table.classList.remove('view-areas');
-                table.classList.add('view-components');
-                viewComponentsBtn.classList.add('active', 'btn-primary');
-                viewComponentsBtn.classList.remove('btn-secondary');
-                viewAreasBtn.classList.remove('active', 'btn-primary');
-                viewAreasBtn.classList.add('btn-secondary');
+                table.classList.replace('view-areas', 'view-components');
+                viewComponentsBtn.classList.add('active');
+                viewAreasBtn.classList.remove('active');
             });
 
             loadData();
