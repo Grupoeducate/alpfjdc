@@ -279,8 +279,8 @@
             const loadData = async () => {
                 try {
                     const [metaResponse, dataResponse] = await Promise.all([
-                        fetch('metadata.json'),
-                        fetch('registros.csv')
+                        fetch('./metadata.json'),
+                        fetch('./registros.csv')
                     ]);
                     metadata = await metaResponse.json();
                     const csvText = await dataResponse.text();
