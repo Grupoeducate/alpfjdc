@@ -3,453 +3,498 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informe de Resultados Académicos</title>
+    <title>Informe Interactivo de Resultados</title>
     <style>
         :root {
-            --primary-color: #007bff;
-            --primary-color-dark: #0056b3;
-            --text-color: #495057;
-            --header-color: #1754a1;
-            --border-color: #dee2e6;
+            --primary-color: #0056b3;
+            --secondary-color: #007bff;
             --background-color: #f8f9fa;
-            --table-header-bg: #343a40;
-
-            /* Badge Colors */
-            --superior-bg: #d4edda; --superior-text: #155724;
-            --alto-bg: #cce5ff;    --alto-text: #004085;
-            --basico-bg: #fff3cd;   --basico-text: #856404;
-            --bajo-bg: #f8d7da;     --bajo-text: #721c24;
+            --font-color: #333;
+            --header-bg: #343a40;
+            --header-font: #ffffff;
+            --border-color: #dee2e6;
+            --row-hover: #e9ecef;
+            --score-superior-bg: #d4edda; --score-superior-text: #155724;
+            --score-alto-bg: #cce5ff; --score-alto-text: #004085;
+            --score-basico-bg: #fff3cd; --score-basico-text: #856404;
+            --score-bajo-bg: #f8d7da; --score-bajo-text: #721c24;
         }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             margin: 0;
-            padding: 2rem 1rem;
+            padding: 20px;
             background-color: var(--background-color);
-            color: var(--text-color);
+            color: var(--font-color);
+            line-height: 1.6;
         }
+
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: auto;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .header h1 {
-            color: var(--header-color);
-            font-size: 2.2rem;
-            font-weight: 600;
-            margin: 0;
-        }
-        .header p {
-            color: #6c757d;
-            font-size: 1.1rem;
-            margin-top: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1.5rem;
-        }
-        .filters-card {
             background: #fff;
-            padding: 1.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 0.3rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
-            margin-bottom: 1.5rem;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
-        .filters-grid {
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+        
+        #schoolLogo {
+            max-height: 80px;
+            width: auto;
+            margin-bottom: 15px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 2.2em;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            color: #6c757d;
+            font-size: 1.1em;
+        }
+
+        .filters {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1.5rem;
+            gap: 15px;
+            padding: 20px;
+            background-color: #fdfdff;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
         }
+
         .filter-group {
             display: flex;
             flex-direction: column;
         }
+
         .filter-group label {
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-            color: #6c757d;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #495057;
         }
-        .filter-group select, .filter-group input {
-            padding: 0.5rem 0.75rem;
+
+        .filter-group input, .filter-group select {
+            padding: 10px;
             border: 1px solid var(--border-color);
-            border-radius: 0.25rem;
-            font-size: 1rem;
-            width: 100%;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .view-buttons {
-            text-align: center;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e9ecef;
+        
+        .filter-group input:focus, .filter-group select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
         }
-        .btn {
-            padding: 0.6rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 500;
-            border-radius: 0.25rem;
+
+        .view-toggle {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .view-toggle button {
+            padding: 10px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            border: 1px solid var(--secondary-color);
+            background-color: #fff;
+            color: var(--secondary-color);
+            border-radius: 5px;
             cursor: pointer;
-            border: 1px solid var(--primary-color);
-            transition: all 0.2s ease-in-out;
-            margin: 0 0.5rem;
+            transition: background-color 0.2s, color 0.2s;
         }
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
+
+        .view-toggle button.active {
+            background-color: var(--secondary-color);
+            color: #fff;
         }
-        .btn-primary:hover {
-            background-color: var(--primary-color-dark);
-            border-color: var(--primary-color-dark);
-        }
-        .btn-outline {
-            background-color: white;
-            color: var(--primary-color);
-        }
-        .btn-outline:hover {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        .results-info {
+        
+        .stats-and-legend {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
-            padding: 0 0.5rem;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
-        #record-count {
-            color: var(--header-color);
-            font-weight: 500;
+
+        .stats {
+            font-weight: 600;
+            color: var(--primary-color);
         }
+        
         .legend {
             display: flex;
-            gap: 1.5rem;
+            gap: 15px;
+            font-size: 0.9em;
+            align-items: center;
         }
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
+            gap: 5px;
         }
-        .legend-dot {
-            width: 12px;
-            height: 12px;
+        .legend-color {
+            width: 15px;
+            height: 15px;
             border-radius: 50%;
         }
+
         .table-container {
             overflow-x: auto;
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: .3rem;
+            max-height: 70vh;
         }
+
         table {
-            width: 100%;
             border-collapse: collapse;
-        }
-        th, td {
-            padding: 0.9rem 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
             white-space: nowrap;
         }
-        thead th {
-            background-color: var(--table-header-bg);
-            color: white;
-            font-weight: 600;
-        }
-        tbody tr:last-child td {
-            border-bottom: none;
-        }
-        td:not(:first-child) {
-            text-align: center;
-        }
-        td:nth-child(4) { /* Estudiante column */
+
+        th, td {
+            padding: 12px 15px;
             text-align: left;
+            border-bottom: 1px solid var(--border-color);
         }
-        .score-badge {
-            display: inline-block;
-            padding: 0.3em 0.7em;
-            font-weight: 600;
-            border-radius: 0.25rem;
-            font-size: 0.9em;
-            min-width: 40px;
-            text-align: center;
+
+        thead th {
+            background-color: var(--header-bg);
+            color: var(--header-font);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            cursor: pointer;
         }
-        .badge-superior { background-color: var(--superior-bg); color: var(--superior-text); }
-        .badge-alto { background-color: var(--alto-bg); color: var(--alto-text); }
-        .badge-basico { background-color: var(--basico-bg); color: var(--basico-text); }
-        .badge-bajo { background-color: var(--bajo-bg); color: var(--bajo-text); }
-        .view-areas .col-component, .view-areas .col-header-component { display: none; }
-        .view-components .col-area, .view-components .col-header-area { display: none; }
+        
+        thead th:hover {
+            background-color: #495057;
+        }
+
+        tbody tr:hover {
+            background-color: var(--row-hover);
+        }
+
+        .score { text-align: center; font-weight: 600; border-radius: 4px; padding: 5px 8px; }
+        .score-superior { background-color: var(--score-superior-bg); color: var(--score-superior-text); }
+        .score-alto { background-color: var(--score-alto-bg); color: var(--score-alto-text); }
+        .score-basico { background-color: var(--score-basico-bg); color: var(--score-basico-text); }
+        .score-bajo { background-color: var(--score-bajo-bg); color: var(--score-bajo-text); }
+        .text-center { text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <header class="header">
-            <h1 id="schoolName">Cargando...</h1>
-            <p id="schoolDane">Cargando...</p>
+        <header>
+            <img id="schoolLogo" src="./logoeducate.png" alt="Logo de la Empresa" onerror="this.style.display='none'">
+            <h1 id="schoolNameHeader">Informe Interactivo de Resultados</h1>
+            <p id="schoolInfoSubHeader"></p>
         </header>
 
-        <div class="filters-card">
-            <div class="filters-grid">
-                <div class="filter-group">
-                    <label for="gradeFilter">Grado</label>
-                    <select id="gradeFilter"></select>
-                </div>
-                <div class="filter-group">
-                    <label for="groupFilter">Grupo</label>
-                    <select id="groupFilter"></select>
-                </div>
-                <div class="filter-group">
-                    <label for="testFilter">Prueba</label>
-                    <select id="testFilter"></select>
-                </div>
-                <div class="filter-group">
-                    <label for="studentSearch">Buscar Estudiante</label>
-                    <input type="text" id="studentSearch" placeholder="Escriba un nombre...">
-                </div>
-                <div class="filter-group">
-                    <label for="performanceFilter">Desempeño General</label>
-                    <select id="performanceFilter">
-                        <option value="all">Mostrar todos</option>
-                        <option value="superior">Superior (3.81 - 5.0)</option>
-                        <option value="alto">Alto (3.21 - 3.8)</option>
-                        <option value="basico">Básico (2.51 - 3.2)</option>
-                        <option value="bajo">Bajo (&lt;= 2.5)</option>
-                    </select>
-                </div>
+        <div class="filters">
+            <div class="filter-group">
+                <label for="gradeFilter">Grado</label>
+                <select id="gradeFilter"></select>
             </div>
-            <div class="view-buttons">
-                <button id="viewAreasBtn" class="btn btn-primary">Vista por Áreas</button>
-                <button id="viewComponentsBtn" class="btn btn-outline">Vista por Componentes</button>
+            <div class="filter-group">
+                <label for="groupFilter">Grupo</label>
+                <select id="groupFilter"></select>
+            </div>
+            <div class="filter-group">
+                <label for="testFilter">Prueba</label>
+                <select id="testFilter"></select>
+            </div>
+            <div class="filter-group">
+                <label for="searchStudent">Buscar Estudiante</label>
+                <input type="text" id="searchStudent" placeholder="Escriba un nombre...">
+            </div>
+            <div class="filter-group">
+                <label for="averageFilter">Desempeño General</label>
+                <select id="averageFilter">
+                    <option value="all">Mostrar todos</option>
+                    <option value="superior">Superior (3.81 - 5.0)</option>
+                    <option value="alto">Alto (3.21 - 3.8)</option>
+                    <option value="basico">Básico (2.51 - 3.2)</option>
+                    <option value="bajo">Bajo (&lt;= 2.5)</option>
+                </select>
+            </div>
+            <div class="view-toggle">
+                <button id="viewAreas" class="active">Vista por Áreas</button>
+                <button id="viewComponents">Vista por Componentes</button>
             </div>
         </div>
 
-        <div class="results-info">
-            <span id="record-count"></span>
+        <div class="stats-and-legend">
+            <div class="stats" id="statsCounter">Cargando datos...</div>
             <div class="legend">
-                 <div class="legend-item"><div class="legend-dot" style="background-color: #a3d6a3;"></div> Superior</div>
-                 <div class="legend-item"><div class="legend-dot" style="background-color: #a1c9f5;"></div> Alto</div>
-                 <div class="legend-item"><div class="legend-dot" style="background-color: #fbe19f;"></div> Básico</div>
-                 <div class="legend-item"><div class="legend-dot" style="background-color: #f2a2a8;"></div> Bajo</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: var(--score-superior-bg);"></span>Superior</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: var(--score-alto-bg);"></span>Alto</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: var(--score-basico-bg);"></span>Básico</div>
+                <div class="legend-item"><span class="legend-color" style="background-color: var(--score-bajo-bg);"></span>Bajo</div>
             </div>
         </div>
 
         <div class="table-container">
-            <table id="resultsTable" class="view-areas">
-                <thead>
-                    <tr>
-                        <th>Grado</th>
-                        <th>Grupo</th>
-                        <th>Prueba</th>
-                        <th>Estudiante</th>
-                        <th class="col-header-area">Prom. General</th>
-                        <th class="col-header-area">Matemáticas</th>
-                        <th class="col-header-area">C. Naturales</th>
-                        <th class="col-header-area">Sociales</th>
-                        <th class="col-header-area">Lenguaje</th>
-                        <th class="col-header-area">Inglés</th>
-                        <th class="col-header-component">LENGUAJE</th>
-                        <th class="col-header-component">BIOLOGIA</th>
-                        <th class="col-header-component">FISICA</th>
-                        <th class="col-header-component">CTS</th>
-                        <th class="col-header-component">ESTADISTICA</th>
-                        <th class="col-header-component">GEOMETRIA</th>
-                        <th class="col-header-component">ARITMETICA</th>
-                        <th class="col-header-component">C. SOCIALES</th>
-                        <th class="col-header-component">C. CIUDADANAS</th>
-                        <th class="col-header-component">INGLES</th>
-                    </tr>
-                </thead>
+            <table>
+                <thead id="tableHeader"></thead>
                 <tbody id="tableBody"></tbody>
             </table>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            let allData = [];
-            let totalRecords = 0;
-            const table = document.getElementById('resultsTable');
-            const tableBody = document.getElementById('tableBody');
-            const recordCountEl = document.getElementById('record-count');
-            
-            const gradeFilter = document.getElementById('gradeFilter');
-            const groupFilter = document.getElementById('groupFilter');
-            const testFilter = document.getElementById('testFilter');
-            const studentSearch = document.getElementById('studentSearch');
-            const performanceFilter = document.getElementById('performanceFilter');
-            const viewAreasBtn = document.getElementById('viewAreasBtn');
-            const viewComponentsBtn = document.getElementById('viewComponentsBtn');
+    document.addEventListener('DOMContentLoaded', async function() {
+        
+        let allRecords = [];
+        const gradeFilter = document.getElementById('gradeFilter');
+        const groupFilter = document.getElementById('groupFilter');
+        const testFilter = document.getElementById('testFilter');
+        const searchStudent = document.getElementById('searchStudent');
+        const averageFilter = document.getElementById('averageFilter');
+        const viewAreasBtn = document.getElementById('viewAreas');
+        const viewComponentsBtn = document.getElementById('viewComponents');
+        const tableHeader = document.getElementById('tableHeader');
+        const tableBody = document.getElementById('tableBody');
+        const statsCounter = document.getElementById('statsCounter');
+        const schoolNameHeader = document.getElementById('schoolNameHeader');
+        const schoolInfoSubHeader = document.getElementById('schoolInfoSubHeader');
 
-            const DATA_MAP = {
-                AREAS: {
-                    'Prom. General': 'Promedio_General',
-                    'Matemáticas': 'Promedio_Matematicas',
-                    'C. Naturales': 'Promedio_Naturales',
-                    'Sociales': 'Promedio_Sociales',
-                    'Lenguaje': 'Promedio_Lenguaje',
-                    'Inglés': 'Promedio_Ingles'
-                },
-                COMPONENTS: {
-                    'LENGUAJE': 'LENGUAJE',
-                    'BIOLOGIA': 'BIOLOGIA',
-                    'FISICA': 'FISICA',
-                    'CTS': 'CIENCIA TECNOLOGIA Y SOCIEDAD',
-                    'ESTADISTICA': 'ESTADISTICA',
-                    'GEOMETRIA': 'GEOMETRIA',
-                    'ARITMETICA': 'ARITMETICA',
-                    'C. SOCIALES': 'CIENCIAS SOCIALES',
-                    'C. CIUDADANAS': 'COMPETENCIAS CIUDADANAS',
-                    'INGLES': 'INGLES'
+        let currentView = 'areas';
+        let sortConfig = { key: 'Estudiante', direction: 'ascending' };
+
+        const headers = {
+            areas: [
+                { key: 'Grado', label: 'Grado' },
+                { key: 'Grupo', label: 'Grupo' },
+                { key: 'Prueba', label: 'Prueba' },
+                { key: 'Estudiante', label: 'Estudiante' },
+                { key: 'Promedio_General', label: 'Prom. General' },
+                { key: 'Promedio_Matematicas', label: 'Matemáticas' },
+                { key: 'Promedio_Lenguaje', label: 'Lenguaje' },
+                { key: 'Promedio_Naturales', label: 'C. Naturales' },
+                { key: 'Promedio_Sociales', label: 'Sociales' },
+                { key: 'Promedio_Ingles', label: 'Inglés' }
+            ],
+            components: [
+                { key: 'Grado', label: 'Grado' },
+                { key: 'Grupo', label: 'Grupo' },
+                { key: 'Prueba', label: 'Prueba' },
+                { key: 'Estudiante', label: 'Estudiante' },
+                { key: 'Promedio_General', label: 'Prom. General' },
+                { key: 'ARITMETICA', label: 'Aritmética' },
+                { key: 'GEOMETRIA', label: 'Geometría' },
+                { key: 'ESTADISTICA', label: 'Estadística' },
+                { key: 'LENGUAJE', label: 'Lenguaje' },
+                { key: 'BIOLOGIA', label: 'Biología' },
+                { key: 'FISICA', label: 'Física' },
+                { key: 'CIENCIA TECNOLOGIA Y SOCIEDAD', label: 'CTS' },
+                { key: 'CIENCIAS SOCIALES', label: 'C. Sociales' },
+                { key: 'COMPETENCIAS CIUDADANAS', label: 'C. Ciudadanas' },
+                { key: 'INGLES', label: 'Inglés' }
+            ]
+        };
+        
+        function parseCSV(text) {
+            const lines = text.trim().replace(/\r/g, '').split('\n');
+            const header = lines[0].split(';');
+            const records = [];
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue;
+                const values = lines[i].split(';');
+                const record = {};
+                for (let j = 0; j < header.length; j++) {
+                    const key = header[j].trim();
+                    const value = values[j] ? values[j].trim() : '';
+                    
+                    if (key === 'Grado' || key === 'Grupo') {
+                        record[key] = value;
+                    } else if (!isNaN(value) && value !== '') {
+                        record[key] = parseFloat(value);
+                    } else {
+                        record[key] = value === '' ? null : value;
+                    }
                 }
-            };
+                records.push(record);
+            }
+            return records;
+        }
 
-            const getBadgeClass = (value) => {
-                if (value === null || value === undefined || value === '') return '';
-                const score = parseFloat(value);
-                if (isNaN(score)) return '';
-                if (score > 3.8) return 'badge-superior';
-                if (score > 3.2) return 'badge-alto';
-                if (score > 2.5) return 'badge-basico';
-                return 'badge-bajo';
-            };
-            
-            const parseCSV = (text) => {
-                const lines = text.trim().split(/\r?\n/);
-                const headers = lines[0].split(';');
-                return lines.slice(1).map(line => {
-                    const values = line.split(';');
-                    const row = {};
-                    headers.forEach((header, index) => {
-                        const value = values[index] ? values[index].trim() : '';
-                        if (value && !isNaN(value.replace(',', '.'))) {
-                            row[header] = parseFloat(value.replace(',', '.'));
-                        } else {
-                            row[header] = value;
-                        }
-                    });
-                    return row;
+        async function loadData() {
+            try {
+                const [metaResponse, recordsResponse] = await Promise.all([
+                    fetch('./metadata.json'),
+                    fetch('./registros.csv')
+                ]);
+
+                if (!metaResponse.ok) throw new Error(`Error al cargar metadata.json: ${metaResponse.statusText}`);
+                if (!recordsResponse.ok) throw new Error(`Error al cargar registros.csv: ${recordsResponse.statusText}`);
+
+                const metadata = await metaResponse.json();
+                const recordsText = await recordsResponse.text();
+                
+                allRecords = parseCSV(recordsText);
+                
+                initialize(metadata);
+
+            } catch (error) {
+                statsCounter.textContent = `Error: No se pudieron cargar los archivos de datos. Asegúrese de que 'index.html', 'metadata.json' y 'registros.csv' estén en la misma carpeta.`;
+                console.error(error);
+            }
+        }
+
+        function populateHeader(metadata) {
+            schoolNameHeader.textContent = metadata.schoolName;
+            schoolInfoSubHeader.textContent = `DANE: ${metadata.schoolDane}`;
+        }
+
+        function populateFilters(metadata) {
+            const { grades, groups, tests } = metadata.filters;
+            gradeFilter.innerHTML = ['Todos', ...grades].map(g => `<option value="${g}">${g}</option>`).join('');
+            groupFilter.innerHTML = ['Todos', ...groups].map(g => `<option value="${g}">${g}</option>`).join('');
+            testFilter.innerHTML = ['Todas', ...tests].map(t => `<option value="${t}">${t}</option>`).join('');
+        }
+
+        function getScoreClass(score) {
+            if (score === null || score === undefined || score === '-') return '';
+            const numScore = parseFloat(score);
+            if (numScore >= 3.81) return 'score-superior';
+            if (numScore >= 3.21) return 'score-alto';
+            if (numScore >= 2.51) return 'score-basico';
+            return 'score-bajo';
+        }
+
+        function renderTable(data) {
+            let headerHTML = '<tr>';
+            headers[currentView].forEach(header => {
+                headerHTML += `<th data-key="${header.key}">${header.label}</th>`;
+            });
+            headerHTML += '</tr>';
+            tableHeader.innerHTML = headerHTML;
+
+            let bodyHTML = '';
+            data.forEach(student => {
+                bodyHTML += '<tr>';
+                headers[currentView].forEach(header => {
+                    const value = student[header.key];
+                    const formattedValue = (typeof value === 'number' && !isNaN(value)) ? value.toFixed(1) : (value || '-');
+                    
+                    if (header.key.startsWith('Promedio_') || (typeof value === 'number' && header.key !== 'Grado' && header.key !== 'Orden_Aplicacion')) {
+                         bodyHTML += `<td class="text-center"><span class="score ${getScoreClass(value)}">${formattedValue}</span></td>`;
+                    } else {
+                        bodyHTML += `<td>${formattedValue}</td>`;
+                    }
                 });
-            };
+                bodyHTML += '</tr>';
+            });
+            tableBody.innerHTML = bodyHTML;
+            statsCounter.textContent = `Mostrando ${data.length} de ${allRecords.length} registros.`;
             
-            const loadData = async () => {
-                try {
-                    const [metaResponse, dataResponse] = await Promise.all([
-                        fetch('metadata.json'),
-                        fetch('registros.csv')
-                    ]);
-                    if (!metaResponse.ok || !dataResponse.ok) throw new Error('Network response was not ok.');
-                    
-                    const metadata = await metaResponse.json();
-                    const csvText = await dataResponse.text();
-                    allData = parseCSV(csvText);
-                    totalRecords = allData.length;
-                    
-                    populateUI(metadata);
-                    filterAndRender();
-                } catch (error) {
-                    console.error("Error al cargar los datos:", error);
-                    tableBody.innerHTML = `<tr><td colspan="19">Error al cargar los datos. Verifique la consola para más detalles.</td></tr>`;
-                }
-            };
-
-            const populateUI = (metadata) => {
-                document.getElementById('schoolName').textContent = metadata.schoolName;
-                document.getElementById('schoolDane').textContent = `DANE: ${metadata.schoolDane}`;
-                const populateSelect = (el, options) => {
-                    el.innerHTML = `<option value="all">${el.id === 'performanceFilter' ? 'Mostrar todos' : 'Todos'}</option>`;
-                    options.forEach(opt => el.innerHTML += `<option value="${opt}">${opt}</option>`);
-                };
-                populateSelect(gradeFilter, metadata.filters.grades);
-                populateSelect(groupFilter, metadata.filters.groups);
-                populateSelect(testFilter, metadata.filters.tests);
-            };
-
-            const renderTable = (data) => {
-                tableBody.innerHTML = '';
-                recordCountEl.textContent = `Mostrando ${data.length} de ${totalRecords} registros.`;
-                if (data.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="19">No se encontraron registros con los filtros seleccionados.</td></tr>';
-                    return;
-                }
-
-                const fragment = document.createDocumentFragment();
-                data.forEach(row => {
-                    const tr = document.createElement('tr');
-                    
-                    // Fixed columns
-                    ['Grado', 'Grupo', 'Prueba', 'Estudiante'].forEach(key => {
-                        const td = document.createElement('td');
-                        td.textContent = row[key] || '';
-                        tr.appendChild(td);
-                    });
-
-                    const createScoreCell = (value, className) => {
-                        const td = document.createElement('td');
-                        td.className = className;
-                        if (typeof value === 'number') {
-                            const badge = document.createElement('span');
-                            badge.className = `score-badge ${getBadgeClass(value)}`;
-                            badge.textContent = value.toFixed(1);
-                            td.appendChild(badge);
-                        }
-                        return td;
-                    };
-                    
-                    Object.values(DATA_MAP.AREAS).forEach(key => tr.appendChild(createScoreCell(row[key], 'col-area')));
-                    Object.values(DATA_MAP.COMPONENTS).forEach(key => tr.appendChild(createScoreCell(row[key], 'col-component')));
-                    
-                    fragment.appendChild(tr);
+            document.querySelectorAll('#tableHeader th').forEach(th => {
+                th.addEventListener('click', () => {
+                    const key = th.dataset.key;
+                    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+                        sortConfig.direction = 'descending';
+                    } else {
+                        sortConfig.key = key;
+                        sortConfig.direction = 'ascending';
+                    }
+                    applyFilters();
                 });
-                tableBody.appendChild(fragment);
-            };
+            });
+        }
 
-            const filterAndRender = () => {
-                let filteredData = [...allData];
-                const grade = gradeFilter.value;
-                const group = groupFilter.value;
-                const test = testFilter.value;
-                const searchTerm = studentSearch.value.trim().toLowerCase();
-                const performance = performanceFilter.value;
+        function applyFilters() {
+            let filteredData = [...allRecords];
 
-                if (grade !== 'all') filteredData = filteredData.filter(r => String(r.Grado) === grade);
-                if (group !== 'all') filteredData = filteredData.filter(r => r.Grupo === group);
-                if (test !== 'all') filteredData = filteredData.filter(r => r.Prueba === test);
-                if (searchTerm) filteredData = filteredData.filter(r => r.Estudiante.toLowerCase().includes(searchTerm));
-                if (performance !== 'all') {
-                    filteredData = filteredData.filter(r => {
-                        const score = r.Promedio_General;
-                        if (score === undefined || score === null) return false;
-                        switch (performance) {
-                            case 'superior': return score > 3.8;
-                            case 'alto': return score > 3.2 && score <= 3.8;
-                            case 'basico': return score > 2.5 && score <= 3.2;
-                            case 'bajo': return score <= 2.5;
-                            default: return true;
-                        }
-                    });
+            if (gradeFilter.value !== 'Todos') {
+                filteredData = filteredData.filter(s => s.Grado == gradeFilter.value);
+            }
+            if (groupFilter.value !== 'Todos') {
+                filteredData = filteredData.filter(s => s.Grupo == groupFilter.value);
+            }
+            if (testFilter.value !== 'Todas') {
+                filteredData = filteredData.filter(s => s.Prueba == testFilter.value);
+            }
+            if (searchStudent.value) {
+                const searchTerm = searchStudent.value.toLowerCase();
+                filteredData = filteredData.filter(s => s.Estudiante.toLowerCase().includes(searchTerm));
+            }
+            if (averageFilter.value !== 'all') {
+                switch(averageFilter.value) {
+                    case 'superior':
+                        filteredData = filteredData.filter(s => s.Promedio_General >= 3.81);
+                        break;
+                    case 'alto':
+                        filteredData = filteredData.filter(s => s.Promedio_General >= 3.21 && s.Promedio_General < 3.81);
+                        break;
+                    case 'basico':
+                        filteredData = filteredData.filter(s => s.Promedio_General >= 2.51 && s.Promedio_General < 3.21);
+                        break;
+                    case 'bajo':
+                        filteredData = filteredData.filter(s => s.Promedio_General <= 2.5);
+                        break;
                 }
-                renderTable(filteredData);
-            };
+            }
+            
+            filteredData.sort((a, b) => {
+                const valA = a[sortConfig.key];
+                const valB = b[sortConfig.key];
+                
+                if (typeof valA === 'number' && typeof valB === 'number') {
+                    return sortConfig.direction === 'ascending' ? valA - valB : valB - valA;
+                }
+                
+                const strA = String(valA).toLowerCase();
+                const strB = String(valB).toLowerCase();
 
-            [gradeFilter, groupFilter, testFilter, performanceFilter].forEach(el => el.addEventListener('change', filterAndRender));
-            studentSearch.addEventListener('input', filterAndRender);
+                if (strA < strB) return sortConfig.direction === 'ascending' ? -1 : 1;
+                if (strA > strB) return sortConfig.direction === 'ascending' ? 1 : -1;
+                return 0;
+            });
+
+            renderTable(filteredData);
+        }
+        
+        function initialize(metadata) {
+            populateHeader(metadata);
+            populateFilters(metadata);
+            applyFilters();
+            [gradeFilter, groupFilter, testFilter, averageFilter].forEach(el => {
+                el.addEventListener('change', applyFilters);
+            });
+            searchStudent.addEventListener('input', applyFilters);
 
             viewAreasBtn.addEventListener('click', () => {
-                table.classList.replace('view-components', 'view-areas');
-                viewAreasBtn.classList.replace('btn-outline', 'btn-primary');
-                viewComponentsBtn.classList.replace('btn-primary', 'btn-outline');
+                currentView = 'areas';
+                viewAreasBtn.classList.add('active');
+                viewComponentsBtn.classList.remove('active');
+                applyFilters();
             });
 
             viewComponentsBtn.addEventListener('click', () => {
-                table.classList.replace('view-areas', 'view-components');
-                viewComponentsBtn.classList.replace('btn-outline', 'btn-primary');
-                viewAreasBtn.classList.replace('btn-primary', 'btn-outline');
+                currentView = 'components';
+                viewComponentsBtn.classList.add('active');
+                viewAreasBtn.classList.remove('active');
+                applyFilters();
             });
+        }
 
-            loadData();
-        });
+        loadData();
+    });
     </script>
 </body>
 </html>
