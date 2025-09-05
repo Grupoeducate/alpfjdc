@@ -1,18 +1,17 @@
 {
-  "schoolName": "ALFONSO LOPEZ PUMAREJO - SEDE FRANCISCO JOSE DE CALDAS (VALLE DEL CAUCA - CARTAGO)",
-  "schoolDane": "1256328652",
+  "schoolName": "ALFONSO LOPEZ PUMAREJO - SEDE FRANCISCO JOSE DE CALDAS ( VALLE DEL CAUCA - CARTAGO )",
+  "schoolDane": "25632145",
   "filters": {
     "grades": [
-      2,
-      3,
-      4,
-      5
+      "2",
+      "3",
+      "4",
+      "5"
     ],
     "groups": [
       "01"
     ],
     "tests": [
-      "ALFA",
       "BETA",
       "DELTA"
     ]
